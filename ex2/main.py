@@ -39,7 +39,6 @@ def equalizaImagem(caminho, nome, formato):
     print(imagem)
     print()
 
-#equalizaImagem('./imagens/xadrez_lowCont.png', 'xadrezLowCont', 'png')
 equalizaImagem('./imagens/marilyn.jpg', 'marilyn', 'jpg')
 equalizaImagem('./imagens/figuraEscura.jpg', 'figuraEscura', 'jpg')
 equalizaImagem('./imagens/figuraClara.jpg', 'figuraClara', 'jpg')

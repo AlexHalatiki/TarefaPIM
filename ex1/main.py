@@ -24,8 +24,6 @@ def processaImagem(caminho, nome):
     plt.ylabel('Quantidade')
     plt.savefig(f'./ex1/histogramas/{nome}_histograma.png')
 
-#processaImagem('./imagens/figuraClara.jpg', 'figuraClara')
-#processaImagem('./imagens/figuraEscura.jpg', 'figuraEscura')
-#processaImagem('./imagens/lena_B.png', 'lena')
-processaImagem('./imagens/marilyn.jpg', 'marilyn')
-processaImagem('./ex2/imagens_equalizadas/marilyn_equalizada.jpg', 'marilyn_equalizada')
+processaImagem('./imagens/figuraClara.jpg', 'figuraClara')
+processaImagem('./imagens/figuraEscura.jpg', 'figuraEscura')
+processaImagem('./imagens/lena_B.png', 'lena')
