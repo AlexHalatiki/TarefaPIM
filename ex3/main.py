@@ -3,34 +3,27 @@ import numpy as np
 from skimage import io, color
 
 def equalizaMatriz(matriz):
-    histograma, intervalos = np.histogram(matriz, bins=8, range=(0, 255))
-    histograma = histograma / matriz.size
-
-    roundgk = []
-
-    for i in range(0,8):
-        if i != 0:
-            histograma[i] += histograma[i-1]
-        roundgk.append(round(histograma[i] * 7))
+    histograma = np.zeros(256)
 
     for i in range(matriz.shape[0]):
         for j in range(matriz.shape[1]):
-            indice_intervalo = np.digitize(matriz[i][j], intervalos)
+            histograma[matriz[i][j]] += 1
 
-            if(indice_intervalo > 8):
-                indice_intervalo = 8
+    histograma = histograma / matriz.size
 
-            novo_intervalo = roundgk[indice_intervalo - 1] + 1
+    for i in range(1,256):
+        histograma[i] += histograma[i-1]
 
-            minimo_intervalo = intervalos[indice_intervalo - 1]
-            maximo_intervalo = intervalos[indice_intervalo]
+    histograma = histograma * 255
 
-            minimo_novo_intervalo = intervalos[novo_intervalo - 1]
-            maximo_novo_intervalo = intervalos[novo_intervalo]
+    for i in range(0,256):
+        histograma[i] = round(histograma[i])
 
-            matriz[i][j] = minimo_novo_intervalo + ((matriz[i][j] - minimo_intervalo) / (maximo_intervalo - minimo_intervalo)) * (maximo_novo_intervalo - minimo_novo_intervalo)
+    for i in range(matriz.shape[0]):
+        for j in range(matriz.shape[1]):
+            matriz[i][j] = histograma[matriz[i][j]]
 
-def equalizaImagemRGB(caminho, nome, formato):
+def equalizamatrizRGB(caminho, nome, formato):
     img = cv2.imread(caminho)
 
     blue = img[:, :, 0]
@@ -41,11 +34,11 @@ def equalizaImagemRGB(caminho, nome, formato):
     equalizaMatriz(green)
     equalizaMatriz(red)
 
-    imagem_equalizada = cv2.merge([blue, green, red])
+    matriz_equalizada = cv2.merge([blue, green, red])
 
-    cv2.imwrite(f'./ex3/rgb_equalizadas/{nome}_equalizada.{formato}', imagem_equalizada)
+    cv2.imwrite(f'./ex3/rgb_equalizadas/{nome}_equalizada.{formato}', matriz_equalizada)
 
-def equalizaImagemYIQ(caminho, nome, formato):
+def equalizamatrizYIQ(caminho, nome, formato):
     img = io.imread(caminho)
 
     img_yiq = color.rgb2yiq(img)
@@ -69,7 +62,7 @@ def equalizaImagemYIQ(caminho, nome, formato):
     io.imsave(f'./ex3/yiq_equalizadas/{nome}_equalizada.{formato}', img_rgb)
 
 
-equalizaImagemRGB('./imagens/outono_LC.png', 'outono_equalizada', 'png')
-equalizaImagemRGB('./imagens/predios.jpeg', 'predios_equalizada', 'jpeg')
-equalizaImagemYIQ('./imagens/outono_LC.png', 'outono_equalizada', 'png')
-equalizaImagemYIQ('./imagens/predios.jpeg', 'predios_equalizada', 'jpeg')
+equalizamatrizRGB('./imagens/outono_LC.png', 'outono_equalizada', 'png')
+equalizamatrizRGB('./imagens/predios.jpeg', 'predios_equalizada', 'jpeg')
+equalizamatrizYIQ('./imagens/outono_LC.png', 'outono_equalizada', 'png')
+equalizamatrizYIQ('./imagens/predios.jpeg', 'predios_equalizada', 'jpeg')

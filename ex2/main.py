@@ -1,44 +1,40 @@
 import numpy as np
-from skimage import io, color
+from skimage import io
 
 def equalizaImagem(caminho, nome, formato):
     imagem = io.imread(caminho)
 
-    histograma, intervalos = np.histogram(imagem, bins=8, range=(0, 255))
-    histograma = histograma / imagem.size
-
-    roundgk = []
-
-    for i in range(0,8):
-        if i != 0:
-            histograma[i] += histograma[i-1]
-        roundgk.append(round(histograma[i] * 7))
+    histograma = np.zeros(256)
 
     for i in range(imagem.shape[0]):
         for j in range(imagem.shape[1]):
-            indice_intervalo = np.digitize(imagem[i][j], intervalos)
+            histograma[imagem[i][j]] += 1
 
-            if(indice_intervalo > 8):
-                indice_intervalo = 8
+    histograma = histograma / imagem.size
 
-            novo_intervalo = roundgk[indice_intervalo - 1] + 1
+    for i in range(1,256):
+        histograma[i] += histograma[i-1]
 
-            minimo_intervalo = intervalos[indice_intervalo - 1]
-            maximo_intervalo = intervalos[indice_intervalo]
+    histograma = histograma * 255
 
-            minimo_novo_intervalo = intervalos[novo_intervalo - 1]
-            maximo_novo_intervalo = intervalos[novo_intervalo]
+    for i in range(0,256):
+        histograma[i] = round(histograma[i])
 
-            imagem[i][j] = minimo_novo_intervalo + ((imagem[i][j] - minimo_intervalo) / (maximo_intervalo - minimo_intervalo)) * (maximo_novo_intervalo - minimo_novo_intervalo)
+    for i in range(imagem.shape[0]):
+        for j in range(imagem.shape[1]):
+            imagem[i][j] = histograma[imagem[i][j]]
 
     io.imsave(f'./ex2/imagens_equalizadas/{nome}_equalizada.{formato}', imagem)
 
     print(f'{nome}:')
     print(histograma)
-    print(roundgk)
     print(imagem)
     print()
+
 
 equalizaImagem('./imagens/marilyn.jpg', 'marilyn', 'jpg')
 equalizaImagem('./imagens/figuraEscura.jpg', 'figuraEscura', 'jpg')
 equalizaImagem('./imagens/figuraClara.jpg', 'figuraClara', 'jpg')
+
+
+
